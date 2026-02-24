@@ -1,0 +1,304 @@
+/* frontend/src/app/(dashboard)/verification/page.module.css */
+
+.container {
+    padding: var(--space-6);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: var(--space-8);
+    gap: var(--space-4);
+}
+
+.title {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+    margin: 0 0 var(--space-2) 0;
+}
+
+.subtitle {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.balanceCard {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: var(--space-4) var(--space-6);
+    background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-700));
+    border-radius: var(--radius-xl);
+    color: white;
+}
+
+.balanceLabel {
+    font-size: var(--text-sm);
+    opacity: 0.9;
+}
+
+.balanceValue {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+}
+
+/* Options Grid */
+.optionsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
+    margin-bottom: var(--space-10);
+}
+
+.optionCard {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-6);
+    transition: all 0.3s ease;
+}
+
+.optionCard:hover {
+    border-color: var(--color-primary-300);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+}
+
+.optionIcon,
+.optionIconBvn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-xl);
+    margin-bottom: var(--space-4);
+}
+
+.optionIcon {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.2));
+    color: var(--color-primary-600);
+}
+
+.optionIconBvn {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.2));
+    color: #3b82f6;
+}
+
+.optionIcon svg,
+.optionIconBvn svg {
+    width: 32px;
+    height: 32px;
+}
+
+.optionContent {
+    flex: 1;
+}
+
+.optionTitle {
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+    margin: 0 0 var(--space-2) 0;
+}
+
+.optionDesc {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    margin: 0 0 var(--space-4) 0;
+    line-height: var(--leading-relaxed);
+}
+
+.optionFeatures {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--space-5) 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.optionFeatures li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+}
+
+.optionFeatures li svg {
+    width: 16px;
+    height: 16px;
+    color: var(--color-primary-500);
+    flex-shrink: 0;
+}
+
+.optionPricing {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-5);
+}
+
+.optionPricing span {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+}
+
+.optionPricing strong {
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+}
+
+.optionBtn,
+.optionBtnBvn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    width: 100%;
+    padding: var(--space-4);
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    color: white;
+    border: none;
+    border-radius: var(--radius-xl);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.optionBtn {
+    background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-700));
+}
+
+.optionBtn:hover {
+    background: linear-gradient(135deg, var(--color-primary-700), var(--color-primary-800));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.optionBtnBvn {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.optionBtnBvn:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.optionBtn svg,
+.optionBtnBvn svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Info Section */
+.infoSection {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-8);
+}
+
+.infoTitle {
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+    text-align: center;
+    margin: 0 0 var(--space-6) 0;
+}
+
+.infoGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-6);
+}
+
+.infoCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-4);
+}
+
+.infoIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    background-color: var(--bg-secondary);
+    color: var(--color-primary-600);
+    border-radius: var(--radius-full);
+    margin-bottom: var(--space-3);
+}
+
+.infoIcon svg {
+    width: 28px;
+    height: 28px;
+}
+
+.infoCard h4 {
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    margin: 0 0 var(--space-1) 0;
+}
+
+.infoCard p {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .optionsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .infoGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: var(--space-4);
+    }
+
+    .header {
+        flex-direction: column;
+    }
+
+    .balanceCard {
+        width: 100%;
+        align-items: flex-start;
+    }
+
+    .title {
+        font-size: var(--text-2xl);
+    }
+
+    .infoGrid {
+        grid-template-columns: 1fr;
+        gap: var(--space-4);
+    }
+
+    .infoSection {
+        padding: var(--space-5);
+    }
+}

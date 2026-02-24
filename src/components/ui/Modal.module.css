@@ -1,0 +1,232 @@
+/* src/components/ui/Modal.module.css */
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: var(--z-modal-backdrop);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+    background-color: var(--bg-overlay);
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.2s ease-out;
+}
+
+.modal {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-height: calc(100vh - var(--space-8));
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-2xl);
+    animation: slideIn 0.3s ease-out;
+    overflow: hidden;
+}
+
+/* Sizes */
+.sm {
+    max-width: 400px;
+}
+
+.md {
+    max-width: 560px;
+}
+
+.lg {
+    max-width: 768px;
+}
+
+.xl {
+    max-width: 1024px;
+}
+
+.full {
+    max-width: calc(100vw - var(--space-8));
+    max-height: calc(100vh - var(--space-8));
+}
+
+/* Close Button */
+.closeButton {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background-color: var(--bg-tertiary);
+    border: none;
+    border-radius: var(--radius-full);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.closeButton:hover {
+    background-color: var(--color-neutral-200);
+    color: var(--text-primary);
+}
+
+.closeButton:active {
+    transform: scale(0.95);
+}
+
+.closeIcon {
+    width: 20px;
+    height: 20px;
+}
+
+/* Header */
+.header {
+    padding: var(--space-6);
+    padding-right: var(--space-12);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.title {
+    margin: 0;
+    font-size: var(--text-2xl);
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    line-height: var(--leading-tight);
+}
+
+.description {
+    margin: var(--space-2) 0 0 0;
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: var(--leading-relaxed);
+}
+
+/* Body */
+.body {
+    flex: 1;
+    padding: var(--space-6);
+    overflow-y: auto;
+}
+
+.body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.body::-webkit-scrollbar-track {
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-full);
+}
+
+.body::-webkit-scrollbar-thumb {
+    background: var(--color-neutral-400);
+    border-radius: var(--radius-full);
+}
+
+.body::-webkit-scrollbar-thumb:hover {
+    background: var(--color-neutral-500);
+}
+
+/* Footer */
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    border-top: 1px solid var(--border-light);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Dark Mode */
+[data-theme='dark'] .modal {
+    background-color: var(--bg-secondary);
+}
+
+[data-theme='dark'] .header {
+    border-bottom-color: var(--border-medium);
+}
+
+[data-theme='dark'] .footer {
+    border-top-color: var(--border-medium);
+}
+
+[data-theme='dark'] .closeButton {
+    background-color: var(--bg-tertiary);
+}
+
+[data-theme='dark'] .closeButton:hover {
+    background-color: var(--color-neutral-700);
+}
+
+/* Mobile Responsive */
+@media (max-width: 640px) {
+    .overlay {
+        padding: 0;
+        align-items: flex-end;
+    }
+
+    .modal {
+        max-width: 100%;
+        max-height: 90vh;
+        border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+        animation: slideUp 0.3s ease-out;
+    }
+
+    .sm,
+    .md,
+    .lg,
+    .xl,
+    .full {
+        max-width: 100%;
+    }
+
+    .header,
+    .body,
+    .footer {
+        padding: var(--space-4);
+    }
+
+    .header {
+        padding-right: var(--space-10);
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(100%);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}

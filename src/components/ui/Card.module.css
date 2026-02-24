@@ -1,0 +1,131 @@
+/* src/components/ui/Card.module.css */
+
+.card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-xl);
+    transition: all var(--transition-base);
+    overflow: hidden;
+}
+
+/* Variants */
+.default {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-light);
+}
+
+.elevated {
+    background-color: var(--bg-primary);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-light);
+}
+
+.outlined {
+    background-color: var(--bg-primary);
+    border: 2px solid var(--border-medium);
+}
+
+.glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+}
+
+[data-theme='dark'] .glass {
+    background: rgba(23, 23, 23, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Hoverable */
+.hoverable {
+    cursor: pointer;
+}
+
+.hoverable:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xl);
+}
+
+.hoverable:active {
+    transform: translateY(0);
+}
+
+/* Padding */
+.padding-none {
+    padding: 0;
+}
+
+.padding-sm {
+    padding: var(--space-4);
+}
+
+.padding-md {
+    padding: var(--space-6);
+}
+
+.padding-lg {
+    padding: var(--space-8);
+}
+
+/* Card Header */
+.cardHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.cardHeaderContent {
+    flex: 1;
+}
+
+.cardHeaderAction {
+    flex-shrink: 0;
+}
+
+/* Card Title */
+.cardTitle {
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    margin: 0;
+    line-height: var(--leading-tight);
+}
+
+/* Card Description */
+.cardDescription {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin: var(--space-2) 0 0 0;
+    line-height: var(--leading-relaxed);
+}
+
+/* Card Content */
+.cardContent {
+    flex: 1;
+}
+
+/* Card Footer */
+.cardFooter {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border-light);
+}
+
+/* Dark Mode */
+[data-theme='dark'] .default,
+[data-theme='dark'] .elevated,
+[data-theme='dark'] .outlined {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-medium);
+}
+
+[data-theme='dark'] .cardFooter {
+    border-top-color: var(--border-medium);
+}

@@ -1,0 +1,35 @@
+/* src/components/layout/Layout.module.css */
+
+.layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--bg-primary);
+}
+
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.container {
+    flex: 1;
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: var(--space-6) var(--space-4);
+}
+
+/* Dark Mode */
+[data-theme='dark'] .layout {
+    background-color: var(--bg-primary);
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+    .container {
+        padding: var(--space-4) var(--space-3);
+    }
+}

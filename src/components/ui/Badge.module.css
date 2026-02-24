@@ -1,0 +1,185 @@
+/* src/components/ui/Badge.module.css */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: var(--font-medium);
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+    transition: all var(--transition-base);
+}
+
+/* Sizes */
+.sm {
+    height: 20px;
+    padding: 0 var(--space-2);
+    font-size: var(--text-xs);
+}
+
+.md {
+    height: 24px;
+    padding: 0 var(--space-3);
+    font-size: var(--text-sm);
+}
+
+.lg {
+    height: 28px;
+    padding: 0 var(--space-4);
+    font-size: var(--text-base);
+}
+
+/* Variants - Filled */
+.default {
+    background-color: var(--color-primary-100);
+    color: var(--color-primary-800);
+}
+
+.success {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: var(--color-success);
+}
+
+.warning {
+    background-color: rgba(245, 158, 11, 0.15);
+    color: var(--color-warning);
+}
+
+.error {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: var(--color-error);
+}
+
+.info {
+    background-color: rgba(59, 130, 246, 0.15);
+    color: var(--color-info);
+}
+
+.neutral {
+    background-color: var(--color-neutral-100);
+    color: var(--color-neutral-700);
+}
+
+/* Outline Variants */
+.outline.default {
+    background-color: transparent;
+    border: 1px solid var(--color-primary-300);
+    color: var(--color-primary-700);
+}
+
+.outline.success {
+    background-color: transparent;
+    border: 1px solid var(--color-success);
+    color: var(--color-success);
+}
+
+.outline.warning {
+    background-color: transparent;
+    border: 1px solid var(--color-warning);
+    color: var(--color-warning);
+}
+
+.outline.error {
+    background-color: transparent;
+    border: 1px solid var(--color-error);
+    color: var(--color-error);
+}
+
+.outline.info {
+    background-color: transparent;
+    border: 1px solid var(--color-info);
+    color: var(--color-info);
+}
+
+.outline.neutral {
+    background-color: transparent;
+    border: 1px solid var(--color-neutral-400);
+    color: var(--color-neutral-700);
+}
+
+/* Dot */
+.dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.default .dot {
+    background-color: var(--color-primary-600);
+}
+
+.success .dot {
+    background-color: var(--color-success);
+}
+
+.warning .dot {
+    background-color: var(--color-warning);
+}
+
+.error .dot {
+    background-color: var(--color-error);
+}
+
+.info .dot {
+    background-color: var(--color-info);
+}
+
+.neutral .dot {
+    background-color: var(--color-neutral-500);
+}
+
+/* Dark Mode */
+[data-theme='dark'] .default {
+    background-color: rgba(34, 197, 94, 0.2);
+    color: var(--color-primary-300);
+}
+
+[data-theme='dark'] .success {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: #6ee7b7;
+}
+
+[data-theme='dark'] .warning {
+    background-color: rgba(245, 158, 11, 0.2);
+    color: #fcd34d;
+}
+
+[data-theme='dark'] .error {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+}
+
+[data-theme='dark'] .info {
+    background-color: rgba(59, 130, 246, 0.2);
+    color: #93c5fd;
+}
+
+[data-theme='dark'] .neutral {
+    background-color: var(--color-neutral-800);
+    color: var(--color-neutral-300);
+}
+
+[data-theme='dark'] .outline.default {
+    border-color: var(--color-primary-500);
+    color: var(--color-primary-400);
+}
+
+[data-theme='dark'] .outline.neutral {
+    border-color: var(--color-neutral-600);
+    color: var(--color-neutral-400);
+}
+
+/* Animations */
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}

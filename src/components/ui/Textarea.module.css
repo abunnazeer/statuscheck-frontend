@@ -1,0 +1,142 @@
+/* src/components/ui/Textarea.module.css */
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.fullWidth {
+    width: 100%;
+}
+
+.labelWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+}
+
+.label {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--text-primary);
+}
+
+.required {
+    color: var(--color-error);
+    margin-left: var(--space-1);
+}
+
+.charCount {
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+    font-weight: var(--font-medium);
+    white-space: nowrap;
+}
+
+.textareaWrapper {
+    position: relative;
+    display: flex;
+    background-color: var(--bg-primary);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-base);
+}
+
+.textareaWrapper:focus-within {
+    border-color: var(--color-primary-500);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+.textareaWrapper.hasError {
+    border-color: var(--color-error);
+}
+
+.textareaWrapper.hasError:focus-within {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.textarea {
+    flex: 1;
+    width: 100%;
+    min-height: 120px;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-base);
+    font-family: inherit;
+    color: var(--text-primary);
+    background: transparent;
+    border: none;
+    outline: none;
+    resize: vertical;
+    line-height: var(--leading-relaxed);
+    transition: all var(--transition-base);
+}
+
+.textarea::placeholder {
+    color: var(--text-tertiary);
+}
+
+.textarea:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    background-color: var(--bg-tertiary);
+    resize: none;
+}
+
+.textarea::-webkit-scrollbar {
+    width: 8px;
+}
+
+.textarea::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: var(--radius-full);
+}
+
+.textarea::-webkit-scrollbar-thumb {
+    background: var(--color-neutral-300);
+    border-radius: var(--radius-full);
+}
+
+.textarea::-webkit-scrollbar-thumb:hover {
+    background: var(--color-neutral-400);
+}
+
+.error {
+    font-size: var(--text-sm);
+    color: var(--color-error);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.error::before {
+    content: '⚠';
+    font-size: var(--text-base);
+}
+
+.helperText {
+    font-size: var(--text-sm);
+    color: var(--text-tertiary);
+    margin: 0;
+}
+
+/* Dark Mode */
+[data-theme='dark'] .textareaWrapper {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-medium);
+}
+
+[data-theme='dark'] .textarea:disabled {
+    background-color: var(--bg-tertiary);
+}
+
+[data-theme='dark'] .textarea::-webkit-scrollbar-thumb {
+    background: var(--color-neutral-600);
+}
+
+[data-theme='dark'] .textarea::-webkit-scrollbar-thumb:hover {
+    background: var(--color-neutral-500);
+}

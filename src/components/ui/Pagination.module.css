@@ -1,0 +1,143 @@
+/* src/components/ui/Pagination.module.css */
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.navButton {
+    min-width: 36px;
+    padding: 0 var(--space-2);
+}
+
+.icon {
+    width: 16px;
+    height: 16px;
+}
+
+.pages {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.pageButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--text-secondary);
+    background-color: transparent;
+    border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.pageButton:hover {
+    color: var(--text-primary);
+    background-color: var(--bg-tertiary);
+}
+
+.pageButton:active {
+    transform: scale(0.95);
+}
+
+.pageButtonActive {
+    color: var(--text-inverse);
+    background: linear-gradient(135deg,
+            var(--color-primary-600),
+            var(--color-primary-700));
+    border-color: transparent;
+    box-shadow: var(--shadow-sm);
+}
+
+.pageButtonActive:hover {
+    color: var(--text-inverse);
+    background: linear-gradient(135deg,
+            var(--color-primary-700),
+            var(--color-primary-800));
+}
+
+.ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--text-tertiary);
+    user-select: none;
+}
+
+/* Pagination Info */
+.info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-3) 0;
+}
+
+.infoText {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+}
+
+.infoText strong {
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+}
+
+/* Dark Mode */
+[data-theme='dark'] .pageButton:hover {
+    background-color: var(--color-neutral-800);
+}
+
+[data-theme='dark'] .pageButtonActive {
+    background: linear-gradient(135deg,
+            var(--color-primary-500),
+            var(--color-primary-600));
+}
+
+[data-theme='dark'] .pageButtonActive:hover {
+    background: linear-gradient(135deg,
+            var(--color-primary-600),
+            var(--color-primary-700));
+}
+
+/* Mobile Responsive */
+@media (max-width: 640px) {
+    .pagination {
+        gap: var(--space-1);
+    }
+
+    .navButton,
+    .pageButton {
+        min-width: 32px;
+        height: 32px;
+        font-size: var(--text-xs);
+    }
+
+    .icon {
+        width: 14px;
+        height: 14px;
+    }
+
+    .ellipsis {
+        min-width: 32px;
+        height: 32px;
+    }
+
+    .infoText {
+        font-size: var(--text-xs);
+        text-align: center;
+    }
+}
