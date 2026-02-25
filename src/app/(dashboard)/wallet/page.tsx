@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAuthStore } from '@/stores/authStore';
@@ -60,6 +60,7 @@ export default function WalletPage() {
   // Filters
   const [filterType, setFilterType] = useState<string>('');
   const [filterStatus, setFilterStatus] = useState<string>('');
+  const pollingInFlightRef = useRef(false);
 
   const limit = 10;
 
@@ -82,14 +83,24 @@ export default function WalletPage() {
     if (!isAuthenticated) return;
 
     const interval = setInterval(async () => {
+      if (document.hidden || pollingInFlightRef.current) {
+        return;
+      }
+
+      pollingInFlightRef.current = true;
       try {
         await Promise.all([fetchWallet(), loadTransactions(currentPage, true)]);
       } catch {
         // Silent background refresh.
+      } finally {
+        pollingInFlightRef.current = false;
       }
-    }, 20000);
+    }, 45000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      pollingInFlightRef.current = false;
+    };
   }, [isAuthenticated, currentPage, filterType, filterStatus]);
 
   const loadWalletData = async () => {

@@ -177,6 +177,10 @@ import { persist } from 'zustand/middleware';
 import type { User, Wallet } from '@/types';
 import { authService } from '@/lib/api/services';
 
+const AUTH_CHECK_COOLDOWN_MS = 60 * 1000;
+let authCheckInFlight: Promise<void> | null = null;
+let lastAuthCheckAt = 0;
+
 interface AuthState {
   user: User | null;
   wallet: Wallet | null;
@@ -268,38 +272,55 @@ export const useAuthStore = create<AuthStore>()(
           return;
         }
 
-        try {
-          // Verify token is still valid by fetching user profile
-          const user = await authService.getProfile();
-          set({ user, isAuthenticated: true });
-        } catch (error) {
-          console.error('Token validation failed:', error);
-          const message = error instanceof Error ? error.message.toLowerCase() : '';
-          const isUnauthorized =
-            message.includes('401') ||
-            message.includes('unauthorized') ||
-            message.includes('invalid token') ||
-            message.includes('token expired');
-
-          // Only clear auth state on explicit unauthorized responses.
-          if (isUnauthorized) {
-            set({
-              user: null,
-              wallet: null,
-              token: null,
-              isAuthenticated: false,
-            });
-
-            if (typeof window !== 'undefined') {
-              localStorage.removeItem('token');
-              localStorage.removeItem('user');
-            }
-            return;
-          }
-
-          // Keep existing session on transient API/network errors.
-          set({ isAuthenticated: true });
+        const now = Date.now();
+        const state = get();
+        if (state.user && now - lastAuthCheckAt < AUTH_CHECK_COOLDOWN_MS) {
+          return;
         }
+
+        if (authCheckInFlight) {
+          return authCheckInFlight;
+        }
+
+        authCheckInFlight = (async () => {
+          try {
+            // Verify token is still valid by fetching user profile
+            const user = await authService.getProfile();
+            set({ user, isAuthenticated: true });
+          } catch (error) {
+            console.error('Token validation failed:', error);
+            const message = error instanceof Error ? error.message.toLowerCase() : '';
+            const isUnauthorized =
+              message.includes('401') ||
+              message.includes('unauthorized') ||
+              message.includes('invalid token') ||
+              message.includes('token expired');
+
+            // Only clear auth state on explicit unauthorized responses.
+            if (isUnauthorized) {
+              set({
+                user: null,
+                wallet: null,
+                token: null,
+                isAuthenticated: false,
+              });
+
+              if (typeof window !== 'undefined') {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+              }
+              return;
+            }
+
+            // Keep existing session on transient API/network errors.
+            set({ isAuthenticated: true });
+          } finally {
+            lastAuthCheckAt = Date.now();
+            authCheckInFlight = null;
+          }
+        })();
+
+        return authCheckInFlight;
       },
 
       login: async (email, password) => {

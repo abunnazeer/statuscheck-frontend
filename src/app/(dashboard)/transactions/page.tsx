@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAuthStore } from '@/stores/authStore';
@@ -40,6 +40,7 @@ export default function TransactionsPage() {
   const [downloadingRequestRef, setDownloadingRequestRef] = useState<string | null>(null);
   const [filterType, setFilterType] = useState<string>('');
   const [filterStatus, setFilterStatus] = useState<string>('');
+  const hasInitializedFiltersRef = useRef(false);
 
   const limit = 12;
 
@@ -54,6 +55,10 @@ export default function TransactionsPage() {
 
   useEffect(() => {
     if (isAuthenticated) {
+      if (!hasInitializedFiltersRef.current) {
+        hasInitializedFiltersRef.current = true;
+        return;
+      }
       loadTransactions(1);
     }
   }, [filterType, filterStatus, isAuthenticated]);
