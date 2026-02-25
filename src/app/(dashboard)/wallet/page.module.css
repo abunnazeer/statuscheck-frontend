@@ -168,6 +168,38 @@
     height: 13px;
 }
 
+.syncBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 5px 11px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 0.72rem;
+    font-weight: var(--font-semibold);
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.syncBtn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.28);
+    border-color: rgba(255, 255, 255, 0.45);
+}
+
+.syncBtn:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+.syncStatus {
+    margin: var(--space-2) 0 0 0;
+    font-size: 0.78rem;
+    color: #f0fff5;
+}
+
 /* Stats Grid */
 .statsGrid {
     display: grid;

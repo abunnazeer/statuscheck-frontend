@@ -278,6 +278,32 @@ export const walletService = {
     return response.data!;
   },
 
+  async syncDeposits(): Promise<{
+    status: 'SYNCED' | 'SKIPPED';
+    reason?: string;
+    reservedAccountNumber?: string;
+    scannedTransactions: number;
+    matchedTransactions: number;
+    creditedCount: number;
+    alreadyReconciledCount: number;
+    failedCount: number;
+    failures: Array<{ reference: string; reason: string }>;
+  }> {
+    const response = await apiClient.post<{
+      status: 'SYNCED' | 'SKIPPED';
+      reason?: string;
+      reservedAccountNumber?: string;
+      scannedTransactions: number;
+      matchedTransactions: number;
+      creditedCount: number;
+      alreadyReconciledCount: number;
+      failedCount: number;
+      failures: Array<{ reference: string; reason: string }>;
+    }>('/wallet/payment/sync');
+
+    return response.data!;
+  },
+
   async verifyPayment(paymentReference: string): Promise<{
     success: boolean;
     status: string;

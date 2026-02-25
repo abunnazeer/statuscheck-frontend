@@ -37,7 +37,7 @@ export default function WalletPage() {
   const router = useRouter();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const { wallet, fetchWallet } = useWalletStore();
-  const { error: showError } = useNotificationStore();
+  const { error: showError, success: showSuccess } = useNotificationStore();
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [stats, setStats] = useState<WalletStats | null>(null);
@@ -54,6 +54,8 @@ export default function WalletPage() {
     message: string;
   } | null>(null);
   const [isLoadingReservedAccount, setIsLoadingReservedAccount] = useState(false);
+  const [isSyncingDeposits, setIsSyncingDeposits] = useState(false);
+  const [syncSummary, setSyncSummary] = useState('');
 
   // Filters
   const [filterType, setFilterType] = useState<string>('');
@@ -195,6 +197,38 @@ export default function WalletPage() {
     }
   };
 
+  const handleManualSync = async () => {
+    try {
+      setIsSyncingDeposits(true);
+      const report = await walletService.syncDeposits();
+
+      const summary = report.status === 'SKIPPED'
+        ? report.reason || 'Sync skipped'
+        : `Synced: ${report.creditedCount} credited, ${report.alreadyReconciledCount} already reconciled, ${report.failedCount} failed`;
+
+      setSyncSummary(summary);
+
+      if (report.creditedCount > 0) {
+        showSuccess(`Wallet updated with ${report.creditedCount} credited payment(s).`);
+      } else {
+        showSuccess(summary);
+      }
+
+      await Promise.all([
+        fetchWallet(),
+        loadTransactions(currentPage, true),
+      ]);
+
+      const refreshedStats = await walletService.getWalletStats();
+      setStats(refreshedStats);
+    } catch (error) {
+      console.error('Manual deposit sync failed:', error);
+      showError(error instanceof Error ? error.message : 'Manual sync failed');
+    } finally {
+      setIsSyncingDeposits(false);
+    }
+  };
+
   if (!isAuthenticated) {
     return null;
   }
@@ -235,6 +269,14 @@ export default function WalletPage() {
                 </div>
                 <div className={styles.reservedAccount}>
                   <div className={styles.accountHeader}>
+                    <button
+                      type="button"
+                      className={styles.syncBtn}
+                      onClick={handleManualSync}
+                      disabled={isSyncingDeposits}
+                    >
+                      {isSyncingDeposits ? 'Syncing...' : 'Sync Deposits'}
+                    </button>
                     {reservedAccount && (
                       <button
                         type="button"
@@ -263,6 +305,9 @@ export default function WalletPage() {
                       Reserved account details are temporarily unavailable.
                     </p>
                   )}
+                  {syncSummary ? (
+                    <p className={styles.syncStatus}>{syncSummary}</p>
+                  ) : null}
                 </div>
               </div>
 
