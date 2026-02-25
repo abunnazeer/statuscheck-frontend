@@ -36,6 +36,7 @@ export default function Navbar() {
     { href: '/verification', label: 'Verification' },
     { href: '/wallet', label: 'Wallet' },
     { href: '/transactions', label: 'Transactions' },
+    { href: '/settings', label: 'Settings' },
   ];
 
   if (user?.role === 'ADMIN') {
@@ -165,6 +166,42 @@ export default function Navbar() {
                           />
                         </svg>
                         Wallet
+                      </Link>
+                      <Link
+                        href="/settings"
+                        className={styles.profileMenuItem}
+                        onClick={() => setIsProfileMenuOpen(false)}
+                      >
+                        <svg
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          className={styles.profileMenuIcon}
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M11.49 3.17a1 1 0 00-1.98 0l-.2 1.33a1 1 0 01-.74.82 5.99 5.99 0 00-1.28.53 1 1 0 01-1.09-.12l-1.06-.83a1 1 0 00-1.4.1l-1.4 1.71a1 1 0 00.12 1.41l1.05.83a1 1 0 01.32 1.03 5.92 5.92 0 000 1.4 1 1 0 01-.32 1.03l-1.05.83a1 1 0 00-.12 1.4l1.4 1.72a1 1 0 001.4.09l1.06-.82a1 1 0 011.09-.13c.4.22.83.39 1.28.53a1 1 0 01.74.82l.2 1.33a1 1 0 001.98 0l.2-1.33a1 1 0 01.74-.82 5.99 5.99 0 001.28-.53 1 1 0 011.09.13l1.06.82a1 1 0 001.4-.1l1.4-1.71a1 1 0 00-.12-1.4l-1.05-.83a1 1 0 01-.32-1.03 5.92 5.92 0 000-1.4 1 1 0 01.32-1.03l1.05-.83a1 1 0 00.12-1.4l-1.4-1.72a1 1 0 00-1.4-.09l-1.06.82a1 1 0 01-1.09.13 5.99 5.99 0 00-1.28-.53 1 1 0 01-.74-.82l-.2-1.33zM10.5 13a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        Settings
+                      </Link>
+                      <Link
+                        href="/settings?tab=security"
+                        className={styles.profileMenuItem}
+                        onClick={() => setIsProfileMenuOpen(false)}
+                      >
+                        <svg
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          className={styles.profileMenuIcon}
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        Change Password
                       </Link>
                       <div className={styles.profileMenuDivider} />
                       <button

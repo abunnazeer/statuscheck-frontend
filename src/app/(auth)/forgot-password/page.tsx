@@ -20,6 +20,7 @@ export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState('');
+  const [manualResetUrl, setManualResetUrl] = useState('');
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -38,15 +39,30 @@ export default function ForgotPasswordPage() {
     setIsLoading(true);
 
     try {
-      await authService.requestPasswordReset(email);
+      const result = await authService.requestPasswordReset(email);
+      setManualResetUrl(result.resetUrl || '');
       setIsSubmitted(true);
-      success('Password reset instructions sent to your email');
+      success(result.resetUrl
+        ? 'Password reset link generated successfully'
+        : 'If your account exists, password reset instructions have been sent');
     } catch (err) {
       console.error('Password reset error:', err);
       // Don't reveal if email exists or not for security
+      setManualResetUrl('');
       setIsSubmitted(true);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const copyResetLink = async () => {
+    if (!manualResetUrl) return;
+
+    try {
+      await navigator.clipboard.writeText(manualResetUrl);
+      success('Reset link copied');
+    } catch {
+      showError('Unable to copy link automatically. Please copy it manually.');
     }
   };
 
@@ -168,25 +184,53 @@ export default function ForgotPasswordPage() {
                         <circle cx="12" cy="12" r="10" />
                       </svg>
                     </div>
-                    <CardTitle>Check Your Email</CardTitle>
+                    <CardTitle>{manualResetUrl ? 'Use Reset Link' : 'Check Your Email'}</CardTitle>
                     <CardDescription>
-                      We have sent password reset instructions to:
+                      {manualResetUrl
+                        ? 'Email delivery is not configured yet. Use this reset link:'
+                        : 'We have sent password reset instructions to:'}
                     </CardDescription>
                   </CardHeader>
 
                   <CardContent>
                     <div className={styles.emailSent}>
-                      <p className={styles.emailAddress}>{email}</p>
-                      <p className={styles.instructions}>
-                        Click the link in the email to reset your password. If you do not see the email, check your spam folder.
-                      </p>
+                      {manualResetUrl ? (
+                        <>
+                          <p className={styles.manualResetNote}>{email}</p>
+                          <a
+                            href={manualResetUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.resetLink}
+                          >
+                            Open password reset page
+                          </a>
+                          <button
+                            type="button"
+                            className={styles.copyLinkBtn}
+                            onClick={copyResetLink}
+                          >
+                            Copy reset link
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <p className={styles.emailAddress}>{email}</p>
+                          <p className={styles.instructions}>
+                            Click the link in the email to reset your password. If you do not see the email, check your spam folder.
+                          </p>
+                        </>
+                      )}
 
                       <div className={styles.resendSection}>
-                        <p>Did not receive the email?</p>
+                        <p>{manualResetUrl ? 'Need another reset link?' : 'Did not receive the email?'}</p>
                         <Button
                           variant="outline"
                           size="md"
-                          onClick={() => setIsSubmitted(false)}
+                          onClick={() => {
+                            setManualResetUrl('');
+                            setIsSubmitted(false);
+                          }}
                         >
                           Try Again
                         </Button>

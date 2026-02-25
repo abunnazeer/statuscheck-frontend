@@ -3,7 +3,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAuthStore } from '@/stores/authStore';
 import { authService } from '@/lib/api/services';
@@ -13,6 +13,7 @@ import styles from './page.module.css';
 
 export default function SettingsPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, isAuthenticated, updateUser } = useAuthStore();
   const { success, error: showError } = useNotificationStore();
 
@@ -60,6 +61,13 @@ export default function SettingsPage() {
       });
     }
   }, [isAuthenticated, user, router]);
+
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab === 'profile' || tab === 'security' || tab === 'notifications') {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
 
   const handleProfileUpdate = async () => {
     if (!profileData.fullName.trim()) {

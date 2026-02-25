@@ -214,6 +214,46 @@
     line-height: var(--leading-relaxed);
 }
 
+.manualResetNote {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin: 0 0 var(--space-4) 0;
+}
+
+.resetLink {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--color-primary-700);
+    word-break: break-all;
+    text-decoration: none;
+    padding: var(--space-3);
+    border-radius: var(--radius-lg);
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    margin-bottom: var(--space-3);
+}
+
+.resetLink:hover {
+    text-decoration: underline;
+}
+
+.copyLinkBtn {
+    border: 1px solid var(--border-light);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    padding: var(--space-2) var(--space-3);
+    cursor: pointer;
+}
+
+.copyLinkBtn:hover {
+    border-color: var(--color-primary-300);
+    color: var(--color-primary-700);
+}
+
 .resendSection {
     display: flex;
     flex-direction: column;

@@ -11,8 +11,6 @@ import { useNotificationStore } from '@/stores/notificationStore';
 import { formatCurrency } from '@/lib/utils';
 import styles from './page.module.css';
 
-const PREMIUM_NIN_PRICE = 50;
-
 export default function NINVerificationPage() {
   const router = useRouter();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -23,14 +21,32 @@ export default function NINVerificationPage() {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [verificationResult, setVerificationResult] = useState<any>(null);
+  const [servicePrice, setServicePrice] = useState<number>(0);
+  const [priceReady, setPriceReady] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
       router.push('/login');
       return;
     }
-    fetchWallet();
-  }, [isAuthenticated, router, fetchWallet]);
+    const loadPageData = async () => {
+      try {
+        const [pricingMap] = await Promise.all([
+          verificationService.getVerificationCosts(),
+          fetchWallet(),
+        ]);
+
+        const configuredPrice = Number(pricingMap.NIN_VERIFICATION || 0);
+        setServicePrice(Number.isFinite(configuredPrice) ? configuredPrice : 0);
+        setPriceReady(true);
+      } catch (err) {
+        setPriceReady(false);
+        showError(err instanceof Error ? err.message : 'Unable to load NIN pricing');
+      }
+    };
+
+    loadPageData();
+  }, [isAuthenticated, router, fetchWallet, showError]);
 
   const resultData = useMemo(() => verificationResult?.data || {}, [verificationResult]);
 
@@ -60,10 +76,15 @@ export default function NINVerificationPage() {
   };
 
   const handleVerify = async () => {
+    if (!priceReady || servicePrice <= 0) {
+      showError('NIN service price is currently unavailable. Please refresh and try again.');
+      return;
+    }
+
     const balance = wallet ? Number(wallet.balance) : 0;
 
-    if (balance < PREMIUM_NIN_PRICE) {
-      showError(`Insufficient balance. You need ${formatCurrency(PREMIUM_NIN_PRICE)} but have ${formatCurrency(balance)}`);
+    if (balance < servicePrice) {
+      showError(`Insufficient balance. You need ${formatCurrency(servicePrice)} but have ${formatCurrency(balance)}`);
       return;
     }
 
@@ -174,7 +195,7 @@ export default function NINVerificationPage() {
                 </div>
                 <h3 className={styles.serviceName}>Premium NIN Verification</h3>
                 <p className={styles.serviceDesc}>Verification + official styled PDF output</p>
-                <div className={styles.servicePrice}>{formatCurrency(PREMIUM_NIN_PRICE)}</div>
+                <div className={styles.servicePrice}>{formatCurrency(servicePrice)}</div>
               </button>
             </div>
           </div>
@@ -202,14 +223,14 @@ export default function NINVerificationPage() {
                 <div className={styles.priceBreakdown}>
                   <div className={styles.priceRow}>
                     <span>Service Fee</span>
-                    <span>{formatCurrency(PREMIUM_NIN_PRICE)}</span>
+                    <span>{formatCurrency(servicePrice)}</span>
                   </div>
                   <div className={styles.priceTotal}>
                     <span>Total</span>
-                    <strong>{formatCurrency(PREMIUM_NIN_PRICE)}</strong>
+                    <strong>{formatCurrency(servicePrice)}</strong>
                   </div>
                 </div>
-                <button className={styles.verifyBtn} onClick={handleVerify} disabled={isVerifying}>
+                <button className={styles.verifyBtn} onClick={handleVerify} disabled={isVerifying || !priceReady}>
                   {isVerifying ? (
                     <>
                       <div className={styles.spinner}></div>

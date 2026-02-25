@@ -140,8 +140,9 @@ export const authService = {
     });
   },
 
-  async requestPasswordReset(email: string): Promise<void> {
-    await apiClient.post('/auth/forgot-password', { email });
+  async requestPasswordReset(email: string): Promise<{ resetToken?: string; resetUrl?: string }> {
+    const response = await apiClient.post<{ resetToken?: string; resetUrl?: string }>('/auth/forgot-password', { email });
+    return response.data || {};
   },
 
   async resetPassword(token: string, newPassword: string): Promise<void> {

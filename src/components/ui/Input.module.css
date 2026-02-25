@@ -94,6 +94,8 @@
 
 .rightIcon {
     right: var(--space-4);
+    pointer-events: auto;
+    z-index: 1;
 }
 
 .leftIcon svg,

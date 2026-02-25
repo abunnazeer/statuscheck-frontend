@@ -556,11 +556,12 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAuthStore } from '@/stores/authStore';
 import { useWalletStore } from '@/stores/walletStore';
+import { verificationService } from '@/lib/api/services';
 import { formatCurrency } from '@/lib/utils';
 import styles from './page.module.css';
 
@@ -568,13 +569,34 @@ export default function VerificationPage() {
   const router = useRouter();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const { wallet, fetchWallet } = useWalletStore();
+  const [ninPrice, setNinPrice] = useState<number>(0);
+  const [bvnPrice, setBvnPrice] = useState<number>(0);
+  const [pricesReady, setPricesReady] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
       router.push('/login');
       return;
     }
-    fetchWallet();
+    const loadPageData = async () => {
+      try {
+        const [pricingMap] = await Promise.all([
+          verificationService.getVerificationCosts(),
+          fetchWallet(),
+        ]);
+
+        const configuredNinPrice = Number(pricingMap.NIN_VERIFICATION || 0);
+        const configuredBvnPrice = Number(pricingMap.BVN_VERIFICATION || 0);
+
+        setNinPrice(Number.isFinite(configuredNinPrice) ? configuredNinPrice : 0);
+        setBvnPrice(Number.isFinite(configuredBvnPrice) ? configuredBvnPrice : 0);
+        setPricesReady(true);
+      } catch {
+        setPricesReady(false);
+      }
+    };
+
+    loadPageData();
   }, [isAuthenticated, router, fetchWallet]);
 
   if (!isAuthenticated) {
@@ -626,7 +648,7 @@ export default function VerificationPage() {
               </ul>
               <div className={styles.optionPricing}>
                 <span>Starting from</span>
-                <strong>₦50.00</strong>
+                <strong>{pricesReady ? formatCurrency(ninPrice) : 'Price unavailable'}</strong>
               </div>
             </div>
             <button
@@ -664,7 +686,7 @@ export default function VerificationPage() {
               </ul>
               <div className={styles.optionPricing}>
                 <span>Starting from</span>
-                <strong>₦50.00</strong>
+                <strong>{pricesReady ? formatCurrency(bvnPrice) : 'Price unavailable'}</strong>
               </div>
             </div>
             <button
