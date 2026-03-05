@@ -142,6 +142,10 @@
     gap: var(--space-4);
 }
 
+.modeGrid {
+    grid-template-columns: repeat(3, 1fr);
+}
+
 .serviceCard {
     position: relative;
     display: flex;
@@ -227,6 +231,12 @@
     margin-bottom: var(--space-5);
 }
 
+.inputGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+}
+
 .label {
     display: block;
     font-size: var(--text-sm);
@@ -300,6 +310,10 @@
 
 .inputFull::placeholder {
     color: var(--text-tertiary);
+    letter-spacing: normal;
+}
+
+.selectField {
     letter-spacing: normal;
 }
 
@@ -467,6 +481,80 @@
     padding: var(--space-5);
 }
 
+.previewCard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+}
+
+.previewHeader {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.previewTitle {
+    margin: 0;
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+}
+
+.previewMeta {
+    margin: 0;
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+}
+
+.previewMetaInline {
+    margin: 0;
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+}
+
+.pdfPreviewFrame {
+    position: absolute;
+    top: -58px;
+    left: -12%;
+    width: 124%;
+    height: 690px;
+    border: 0;
+    background-color: #ffffff;
+    pointer-events: none;
+}
+
+.pdfPreviewViewport {
+    position: relative;
+    width: 100%;
+    height: 520px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background-color: #f5f5f5;
+}
+
+.previewState {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 160px;
+    padding: var(--space-4);
+    background-color: var(--bg-secondary);
+    border: 1px dashed var(--border-default);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    text-align: center;
+}
+
 .dataGrid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -498,11 +586,13 @@
 .resultActions {
     display: flex;
     justify-content: center;
+    gap: var(--space-3);
     padding: var(--space-5);
     background-color: rgba(255, 255, 255, 0.5);
     border-top: 1px solid var(--border-light);
 }
 
+.previewBtn,
 .downloadBtn {
     display: flex;
     align-items: center;
@@ -518,20 +608,66 @@
     transition: all 0.2s ease;
 }
 
+.previewBtn {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-default);
+}
+
+.previewBtn:hover:not(:disabled) {
+    background: var(--bg-secondary);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
 .downloadBtn:hover:not(:disabled) {
     background: linear-gradient(135deg, var(--color-primary-700), var(--color-primary-800));
     transform: translateY(-1px);
     box-shadow: var(--shadow-md);
 }
 
+.previewBtn:disabled,
 .downloadBtn:disabled {
     opacity: 0.7;
     cursor: not-allowed;
 }
 
+.previewBtn svg,
 .downloadBtn svg {
     width: 20px;
     height: 20px;
+}
+
+.previewModalBody {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    overflow: hidden;
+}
+
+.pdfPreviewViewportModal {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 280px);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    overflow: auto;
+    background-color: #f5f5f5;
+}
+
+.pdfPreviewFrameModal {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background-color: #ffffff;
+    pointer-events: auto;
+}
+
+.previewModalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
 }
 
 .resultError {
@@ -571,6 +707,14 @@
         grid-template-columns: 1fr;
     }
 
+    .modeGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .inputGrid {
+        grid-template-columns: 1fr;
+    }
+
     .formFooter {
         flex-direction: column;
         align-items: stretch;
@@ -587,7 +731,41 @@
         margin-bottom: var(--space-4);
     }
 
+    .resultActions {
+        flex-direction: column;
+    }
+
+    .previewBtn,
+    .downloadBtn {
+        width: 100%;
+        justify-content: center;
+    }
+
     .dataGrid {
         grid-template-columns: 1fr;
+    }
+
+    .pdfPreviewFrame {
+        top: -64px;
+        left: -20%;
+        width: 140%;
+        height: 610px;
+    }
+
+    .pdfPreviewViewport {
+        height: 420px;
+    }
+
+    .pdfPreviewViewportModal {
+        height: calc(100vh - 330px);
+    }
+
+    .pdfPreviewFrameModal {
+        width: 100%;
+        height: 100%;
+    }
+
+    .previewModalActions {
+        flex-direction: column;
     }
 }

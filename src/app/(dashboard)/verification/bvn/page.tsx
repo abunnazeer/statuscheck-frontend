@@ -6,10 +6,29 @@ import Link from 'next/link';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAuthStore } from '@/stores/authStore';
 import { useWalletStore } from '@/stores/walletStore';
-import { verificationService, pdfService } from '@/lib/api/services';
+import { verificationService, pdfService, type BVNSlipType } from '@/lib/api/services';
 import { useNotificationStore } from '@/stores/notificationStore';
 import { formatCurrency } from '@/lib/utils';
 import styles from './page.module.css';
+
+const BVN_TEMPLATE_OPTIONS: Array<{
+  id: BVNSlipType;
+  label: string;
+  description: string;
+}> = [
+  { id: 'BASIC', label: 'Basic Template', description: 'Verification success sheet with profile details' },
+  { id: 'ADVANCE', label: 'Advance Template', description: 'Structured BVN detail table layout' },
+  { id: 'CARD', label: 'Card Template', description: 'Compact BVN card style output' },
+];
+
+const BVN_TEMPLATE_SERVICE_CODE: Record<BVNSlipType, string> = {
+  BASIC: 'BVN_TEMPLATE_BASIC',
+  ADVANCE: 'BVN_TEMPLATE_ADVANCE',
+  CARD: 'BVN_TEMPLATE_CARD',
+};
+
+const getBvnTemplateLabel = (templateType: BVNSlipType): string =>
+  BVN_TEMPLATE_OPTIONS.find((item) => item.id === templateType)?.label || 'Basic Template';
 
 export default function BVNVerificationPage() {
   const router = useRouter();
@@ -21,8 +40,9 @@ export default function BVNVerificationPage() {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [verificationResult, setVerificationResult] = useState<any>(null);
-  const [servicePrice, setServicePrice] = useState<number>(0);
+  const [pricingMap, setPricingMap] = useState<Record<string, number>>({});
   const [priceReady, setPriceReady] = useState(false);
+  const [templateType, setTemplateType] = useState<BVNSlipType>('BASIC');
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -36,8 +56,7 @@ export default function BVNVerificationPage() {
           fetchWallet(),
         ]);
 
-        const configuredPrice = Number(pricingMap.BVN_VERIFICATION || 0);
-        setServicePrice(Number.isFinite(configuredPrice) ? configuredPrice : 0);
+        setPricingMap(pricingMap || {});
         setPriceReady(true);
       } catch (err) {
         setPriceReady(false);
@@ -47,6 +66,12 @@ export default function BVNVerificationPage() {
 
     loadPageData();
   }, [isAuthenticated, router, fetchWallet, showError]);
+
+  const servicePrice = useMemo(() => {
+    const templateCode = BVN_TEMPLATE_SERVICE_CODE[templateType];
+    const configuredPrice = Number(pricingMap[templateCode] || 0);
+    return Number.isFinite(configuredPrice) ? configuredPrice : 0;
+  }, [pricingMap, templateType]);
 
   const resultData = useMemo(() => verificationResult?.data || {}, [verificationResult]);
 
@@ -78,7 +103,7 @@ export default function BVNVerificationPage() {
 
   const handleVerify = async () => {
     if (!priceReady || servicePrice <= 0) {
-      showError('BVN service price is currently unavailable. Please refresh and try again.');
+      showError('Selected BVN template price is unavailable. Please check admin pricing or refresh and try again.');
       return;
     }
 
@@ -98,11 +123,11 @@ export default function BVNVerificationPage() {
     setVerificationResult(null);
 
     try {
-      const result = await verificationService.verifyBVN(bvn);
+      const result = await verificationService.verifyBVN({ bvn, templateType });
       setVerificationResult(result);
 
       if (result.status === 'SUCCESS') {
-        success('Premium BVN verification completed successfully!');
+        success(`${getBvnTemplateLabel(templateType)} BVN verification completed successfully!`);
       } else {
         showError(result.message || 'Verification failed');
       }
@@ -134,12 +159,12 @@ export default function BVNVerificationPage() {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = buildUniquePdfName('BVN', viewModel.bvn || requestRef);
+      link.download = buildUniquePdfName(`${templateType}_BVN`, viewModel.bvn || requestRef);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      success('Premium BVN PDF downloaded successfully');
+      success(`${getBvnTemplateLabel(templateType)} BVN PDF downloaded successfully`);
     } catch (err) {
       showError(err instanceof Error ? err.message : 'Failed to download premium BVN PDF');
     } finally {
@@ -170,8 +195,8 @@ export default function BVNVerificationPage() {
             </svg>
           </div>
           <div>
-            <h1 className={styles.title}>Premium BVN Verification</h1>
-            <p className={styles.subtitle}>Verify BVN and get a downloadable premium PDF</p>
+            <h1 className={styles.title}>BVN Verification</h1>
+            <p className={styles.subtitle}>Verify BVN and generate Basic, Advance, or Card PDF templates</p>
           </div>
           <div className={styles.balanceCard}>
             <span className={styles.balanceLabel}>Balance</span>
@@ -187,15 +212,15 @@ export default function BVNVerificationPage() {
             </div>
             <div className={styles.servicesGrid}>
               <button className={`${styles.serviceCard} ${styles.selected}`}>
-                <span className={styles.popularBadge}>Premium</span>
+                <span className={styles.popularBadge}>PDF</span>
                 <div className={styles.serviceIcon}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M9 12l2 2 4-4" />
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                   </svg>
                 </div>
-                <h3 className={styles.serviceName}>Premium BVN Verification</h3>
-                <p className={styles.serviceDesc}>Verification + official styled PDF output</p>
+                <h3 className={styles.serviceName}>BVN Verification</h3>
+                <p className={styles.serviceDesc}>Verification + downloadable PDF templates</p>
                 <div className={styles.servicePrice}>{formatCurrency(servicePrice)}</div>
               </button>
             </div>
@@ -204,9 +229,27 @@ export default function BVNVerificationPage() {
           <div className={styles.section}>
             <div className={styles.sectionHeader}>
               <span className={styles.stepNumber}>2</span>
-              <h2 className={styles.sectionTitle}>Enter BVN</h2>
+              <h2 className={styles.sectionTitle}>Template & BVN</h2>
             </div>
             <div className={styles.formCard}>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>BVN Template Type</label>
+                <select
+                  className={styles.inputFull}
+                  value={templateType}
+                  onChange={(e) => setTemplateType(e.target.value as BVNSlipType)}
+                >
+                  {BVN_TEMPLATE_OPTIONS.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <p className={styles.hint}>
+                  {BVN_TEMPLATE_OPTIONS.find((option) => option.id === templateType)?.description}
+                </p>
+              </div>
+
               <div className={styles.formGroup}>
                 <label className={styles.label}>Bank Verification Number (BVN)</label>
                 <input
@@ -243,7 +286,7 @@ export default function BVNVerificationPage() {
                         <path d="M9 12l2 2 4-4" />
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                       </svg>
-                      Verify BVN
+                      Generate {getBvnTemplateLabel(templateType)} PDF
                     </>
                   )}
                 </button>
@@ -353,7 +396,7 @@ export default function BVNVerificationPage() {
                           <polyline points="7 10 12 15 17 10" />
                           <line x1="12" y1="15" x2="12" y2="3" />
                         </svg>
-                        {isDownloadingPdf ? 'Downloading...' : 'Download Premium BVN PDF'}
+                        {isDownloadingPdf ? 'Downloading...' : `Download ${getBvnTemplateLabel(templateType)} BVN PDF`}
                       </button>
                     </div>
                   </>

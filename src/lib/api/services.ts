@@ -30,8 +30,21 @@ interface BackendVerificationResult {
   requestRef: string;
   status: 'PENDING' | 'SUCCESS' | 'FAILED';
   data?: unknown;
+  pdfPath?: string;
   message: string;
 }
+
+export type NINSlipType =
+  | 'NORMAL'
+  | 'PREMIUM'
+  | 'NIN_VERIFIED'
+  | 'VERIFICATION'
+  | 'NIN_IMPROVED';
+
+export type BVNSlipType =
+  | 'BASIC'
+  | 'ADVANCE'
+  | 'CARD';
 
 const splitFullName = (fullName?: string) => {
   const parts = (fullName || '').trim().split(/\s+/).filter(Boolean);
@@ -352,15 +365,26 @@ export const verificationService = {
     return response.data || [];
   },
 
-  async verifyNIN(payload: string | { nin?: string; identityNumber?: string }): Promise<BackendVerificationResult> {
+  async verifyNIN(
+    payload: string | { nin?: string; identityNumber?: string; slipType?: NINSlipType }
+  ): Promise<BackendVerificationResult> {
     const nin = typeof payload === 'string' ? payload : payload.nin || payload.identityNumber || '';
-    const response = await apiClient.post<BackendVerificationResult>('/verification/nin/verify', { nin });
+    const slipType = typeof payload === 'string' ? undefined : payload.slipType;
+    const response = await apiClient.post<BackendVerificationResult>('/verification/nin/verify', {
+      nin,
+      ...(slipType ? { slipType } : {}),
+    });
     return response.data!;
   },
 
-  async verifyNINByPhone(phone: string): Promise<BackendVerificationResult> {
+  async verifyNINByPhone(
+    payload: string | { phone?: string; phoneNumber?: string; slipType?: NINSlipType }
+  ): Promise<BackendVerificationResult> {
+    const phone = typeof payload === 'string' ? payload : payload.phoneNumber || payload.phone || '';
+    const slipType = typeof payload === 'string' ? undefined : payload.slipType;
     const response = await apiClient.post<BackendVerificationResult>('/verification/nin/verify-phone', {
       phoneNumber: phone,
+      ...(slipType ? { slipType } : {}),
     });
     return response.data!;
   },
@@ -372,19 +396,27 @@ export const verificationService = {
     lastname?: string;
     dateOfBirth: string;
     gender: string;
+    slipType?: NINSlipType;
   }): Promise<BackendVerificationResult> {
     const response = await apiClient.post<BackendVerificationResult>('/verification/nin/search-demographic', {
       firstname: data.firstname || data.firstName,
       lastname: data.lastname || data.lastName,
       dateOfBirth: data.dateOfBirth,
       gender: data.gender,
+      ...(data.slipType ? { slipType: data.slipType } : {}),
     });
     return response.data!;
   },
 
-  async verifyBVN(payload: string | { bvn?: string; identityNumber?: string }): Promise<BackendVerificationResult> {
+  async verifyBVN(
+    payload: string | { bvn?: string; identityNumber?: string; templateType?: BVNSlipType }
+  ): Promise<BackendVerificationResult> {
     const bvn = typeof payload === 'string' ? payload : payload.bvn || payload.identityNumber || '';
-    const response = await apiClient.post<BackendVerificationResult>('/verification/bvn/verify', { bvn });
+    const templateType = typeof payload === 'string' ? undefined : payload.templateType;
+    const response = await apiClient.post<BackendVerificationResult>('/verification/bvn/verify', {
+      bvn,
+      ...(templateType ? { templateType } : {}),
+    });
     return response.data!;
   },
 
