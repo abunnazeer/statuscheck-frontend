@@ -38,9 +38,11 @@ export default function AdminUsersPage() {
   const [totalUsers, setTotalUsers] = useState(0);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [modalAction, setModalAction] = useState<'status' | 'delete' | null>(null);
+  const [modalAction, setModalAction] = useState<'status' | 'delete' | 'topup' | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [newStatus, setNewStatus] = useState<string>('');
+  const [topUpAmount, setTopUpAmount] = useState('');
+  const [topUpDescription, setTopUpDescription] = useState('');
 
   const limit = 10;
 
@@ -79,17 +81,21 @@ export default function AdminUsersPage() {
     fetchUsers();
   };
 
-  const openModal = (userItem: User, action: 'status' | 'delete') => {
+  const openModal = (userItem: User, action: 'status' | 'delete' | 'topup') => {
     setSelectedUser(userItem);
     setModalAction(action);
     setShowModal(true);
     setNewStatus(userItem.status);
+    setTopUpAmount('');
+    setTopUpDescription('');
   };
 
   const closeModal = () => {
     setShowModal(false);
     setSelectedUser(null);
     setModalAction(null);
+    setTopUpAmount('');
+    setTopUpDescription('');
   };
 
   const handleUpdateStatus = async () => {
@@ -120,6 +126,30 @@ export default function AdminUsersPage() {
     } catch (err) {
       console.error('Delete user failed:', err);
       showError(err instanceof Error ? err.message : 'Failed to delete user');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleTopUpUser = async () => {
+    if (!selectedUser) return;
+
+    const amount = parseFloat(topUpAmount);
+
+    if (isNaN(amount) || amount <= 0) {
+      showError('Enter a valid top-up amount');
+      return;
+    }
+
+    setActionLoading(true);
+    try {
+      await adminService.topUpUserWallet(selectedUser.id, amount, topUpDescription || undefined);
+      success(`${selectedUser.fullName}'s wallet was topped up successfully`);
+      closeModal();
+      fetchUsers();
+    } catch (err) {
+      console.error('User top-up failed:', err);
+      showError(err instanceof Error ? err.message : 'Failed to top up user wallet');
     } finally {
       setActionLoading(false);
     }
@@ -243,6 +273,17 @@ export default function AdminUsersPage() {
                     <td>
                       <div className={styles.actions}>
                         <button
+                          className={`${styles.actionBtn} ${styles.creditBtn}`}
+                          onClick={() => openModal(userItem, 'topup')}
+                          title="Top Up Wallet"
+                          disabled={userItem.role === 'ADMIN'}
+                        >
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M12 5v14" />
+                            <path d="M5 12h14" />
+                          </svg>
+                        </button>
+                        <button
                           className={styles.actionBtn}
                           onClick={() => openModal(userItem, 'status')}
                           title="Change Status"
@@ -309,6 +350,7 @@ export default function AdminUsersPage() {
             <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
               <div className={styles.modalHeader}>
                 <h2>
+                  {modalAction === 'topup' && 'Top Up User Wallet'}
                   {modalAction === 'status' && 'Change User Status'}
                   {modalAction === 'delete' && 'Delete User'}
                 </h2>
@@ -329,6 +371,36 @@ export default function AdminUsersPage() {
                     <span>{selectedUser.email}</span>
                   </div>
                 </div>
+
+                {modalAction === 'topup' && (
+                  <>
+                    <div className={styles.currentBalance}>
+                      Current balance: {formatCurrency(parseFloat(selectedUser.wallet?.balance || '0'))}
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Amount</label>
+                      <input
+                        type="number"
+                        min="1"
+                        step="0.01"
+                        value={topUpAmount}
+                        onChange={(e) => setTopUpAmount(e.target.value)}
+                        className={styles.input}
+                        placeholder="Enter amount"
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Description</label>
+                      <input
+                        type="text"
+                        value={topUpDescription}
+                        onChange={(e) => setTopUpDescription(e.target.value)}
+                        className={styles.input}
+                        placeholder="Optional reason for this manual top-up"
+                      />
+                    </div>
+                  </>
+                )}
 
                 {modalAction === 'status' && (
                   <div className={styles.formGroup}>
@@ -358,10 +430,22 @@ export default function AdminUsersPage() {
                 </button>
                 <button
                   className={`${styles.confirmBtn} ${modalAction === 'delete' ? styles.debitConfirm : ''}`}
-                  onClick={modalAction === 'status' ? handleUpdateStatus : handleDeleteUser}
+                  onClick={
+                    modalAction === 'topup'
+                      ? handleTopUpUser
+                      : modalAction === 'status'
+                        ? handleUpdateStatus
+                        : handleDeleteUser
+                  }
                   disabled={actionLoading}
                 >
-                  {actionLoading ? 'Processing...' : 'Confirm'}
+                  {actionLoading
+                    ? 'Processing...'
+                    : modalAction === 'topup'
+                      ? 'Top Up Wallet'
+                      : modalAction === 'status'
+                        ? 'Update Status'
+                        : 'Delete User'}
                 </button>
               </div>
             </div>

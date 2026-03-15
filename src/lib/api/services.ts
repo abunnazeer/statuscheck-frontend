@@ -686,6 +686,10 @@ export const adminService = {
     await apiClient.post('/admin/wallet/top-up', { amount, description });
   },
 
+  async topUpUserWallet(userId: string, amount: number, description?: string): Promise<void> {
+    await apiClient.post(`/admin/users/${userId}/wallet/top-up`, { amount, description });
+  },
+
   async getMaintenanceMode(): Promise<{ enabled: boolean; message: string | null }> {
     const response = await apiClient.get<{ enabled: boolean; message: string | null }>('/admin/settings/maintenance');
     return response.data || { enabled: false, message: null };
